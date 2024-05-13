@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import { dbconnection } from './databases/dbconnection.js'
 import { AppError } from './src/utils/AppError.js'
 import userRouter from './src/modules/auth/auth.router.js'
+import cors from 'cors'
 const app = express()
 app.use(express.json())
 
@@ -11,6 +12,7 @@ const port = 7000
 
 
 app.use(express.json())
+app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use('/users',userRouter)
 
@@ -24,4 +26,4 @@ app.use((err,req,res,next)=>{
     res.status(code).json({message:err.message })
 })
 dbconnection()
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(process.env.PORT||port, () => console.log(`Example app listening on port ${port}!`))
