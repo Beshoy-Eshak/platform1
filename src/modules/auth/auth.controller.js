@@ -41,7 +41,8 @@ const signUp =catchAsyncError(async (req,res,next)=>{
             return res.status(500).json({message:'Error sending email' + error});
         }
     });
-    res.json({message:"Success and Code Has been sent In Your Email To Verfiy Email",user})
+    const {isAdmin,...other}=user._doc;
+    res.json({message:"Success and Code Has been sent In Your Email To Verfiy Email",...other})
 })
 
 const signIn=catchAsyncError(async (req,res,next)=>{
@@ -73,7 +74,8 @@ const updateDate =catchAsyncError(async (req,res,next)=>{
     const user =await userModel.findById(req.user._id)
     if(!user) return next(new AppError("Not Valid Email",403))
     const newUpdate =await userModel.findByIdAndUpdate(req.user._id,req.body,{new:true})
-    res.json({message:"success",newUpdate})
+    const {isAdmin,...other}=newUpdate._doc;
+    res.json({message:"success",...other})
 })
 const changePassword =catchAsyncError(async (req,res,next)=>{
     const {newPassword,oldPassword}=req.body
@@ -82,13 +84,15 @@ const changePassword =catchAsyncError(async (req,res,next)=>{
     if(!oldPassword) return next(new AppError("please Enter Old Password",403))
     if(!(await bcrypt.compare(oldPassword, user.password)))  return next(new AppError("Password That You Enter is Wrong"))
     const newUpdate =await userModel.findByIdAndUpdate(req.user,{password:newPassword},{new:true})
-    res.json({message:"success",newUpdate})
+    const {isAdmin,...other}=newUpdate._doc;
+    res.json({message:"success",...other})
 })
 
 const getUser =catchAsyncError(async (req,res,next)=>{
     const user =await userModel.findById(req.user._id)
     if(!user) return next(new AppError("User Not Found" ,403))
-    res.json({message:"success",user})
+    const {isAdmin,...other}=user._doc;
+    res.json({message:"success",...other})
 })
 
 const logout =catchAsyncError(async (req,res,next)=>{
