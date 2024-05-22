@@ -4,6 +4,8 @@ import { dbconnection } from './databases/dbconnection.js'
 import { AppError } from './src/utils/AppError.js'
 import userRouter from './src/modules/auth/auth.router.js'
 import cors from 'cors'
+import studentRouter from './src/modules/student/student.router.js'
+import doctorRouter from './src/modules/docter/docter.router.js'
 const app = express()
 app.use(express.json())
 
@@ -15,6 +17,8 @@ app.use(express.json())
 app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use('/users',userRouter)
+app.use('/student',studentRouter)
+app.use('/doctor',doctorRouter)
 
 
 app.all("*",(req,res,next)=>{
