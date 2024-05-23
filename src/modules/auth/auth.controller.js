@@ -50,7 +50,7 @@ const signIn=catchAsyncError(async (req,res,next)=>{
     const user =await userModel.findOne({gmail})
     if(!user ) return next(new AppError("Account Not Found ",401))
     if(!user.confrimEmail) return next(new AppError("Please Verfiy Your Email Before",403))
-    if(!(await bcrypt.compare(password, user.password))) return next(new AppError("Password Wrong",403))
+    if(!(await bcrypt.compare(password, user.password))) return next(new AppError("Account Not Found or Password Wrong",403))
   
     let token = jwt.sign({userId:user._id,userName:user.name,Gender:user.gender,Email:user.gmail,Phone:user.phone },process.env.SECRET_KEY );
     res.json({message:"success",token})
