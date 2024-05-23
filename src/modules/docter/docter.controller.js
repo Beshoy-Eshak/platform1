@@ -25,7 +25,28 @@ const deleteDoctor =catchAsyncError(async (req,res,next)=>{
     res.json({message:"Deleted"})
 })
 
+const getDoctor =catchAsyncError(async (req,res,next)=>{
+    const {id} =req.body
+    const isAdmin ="doctor"
+  const doctor =  await userModel.findOne({_id:id ,isAdmin})
+    res.json({message:"success",doctor})
+})
+
+const getAllDoctor =catchAsyncError(async (req,res,next)=>{
+    const isAdmin ="doctor"
+  const doctors=  await userModel.find({isAdmin})
+    res.json({message:"success",doctors})
+})
+
+const updateDoctor =catchAsyncError(async (req,res,next)=>{
+    const {id} =req.params
+  const update =  await userModel.findByIdAndUpdate(id ,req.body,{new :true})
+    res.json({message:"updated",update})
+})
 export {
     addDocter ,
-    deleteDoctor
+    deleteDoctor ,
+    getAllDoctor ,
+    getDoctor ,
+    updateDoctor
 }

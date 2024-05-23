@@ -41,7 +41,7 @@ const signUp =catchAsyncError(async (req,res,next)=>{
             return res.status(500).json({message:'Error sending email' + error});
         }
     });
-    const {isAdmin,...other}=user._doc;
+    const {isAdmin,confrimEmail,...other}=user._doc;
     res.json({message:"Success and Code Has been sent In Your Email To Verfiy Email",...other})
 })
 

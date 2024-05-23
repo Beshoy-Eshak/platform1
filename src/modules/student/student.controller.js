@@ -21,7 +21,28 @@ const deleteUser =catchAsyncError(async (req,res,next)=>{
     res.json({message:"Deleted"})
 })
 
+const getStudent =catchAsyncError(async (req,res,next)=>{
+    const {id} =req.body
+    const isAdmin ="student"
+  const Student =  await userModel.findOne({_id:id ,isAdmin})
+    res.json({message:"success",Student})
+})
+
+const getAllStudent =catchAsyncError(async (req,res,next)=>{
+    const isAdmin ="student"
+  const Students=  await userModel.find({isAdmin})
+    res.json({message:"success",Students})
+})
+
+const updateStudent =catchAsyncError(async (req,res,next)=>{
+    const {id} =req.params
+  const updateStudent0 =  await userModel.findByIdAndUpdate(id ,req.body,{new :true})
+    res.json({message:"updated",updateStudent0})
+})
 export {
     addStudent ,
-    deleteUser
+    deleteUser ,
+    getStudent ,
+    getAllStudent ,
+    updateStudent
 }
