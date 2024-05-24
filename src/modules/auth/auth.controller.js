@@ -23,17 +23,17 @@ const signUp =catchAsyncError(async (req,res,next)=>{
     const   transporter = nodemailer.createTransport({
         service: 'outlook',
         auth: {
-            user: "beshoy222666888@outlook.com",
-            pass: process.env.PASSWORD_EMAIL,
+            user: "beshoyeshak865@outlook.com",
+            pass: "beshoy4321",
         },
     });
     const verificationNumber = randomInt(1000, 9999); 
     emailVerificationNumbers[userEmail] = verificationNumber;
     const mailOptions = {
-        from: '"Beshoy 👻" <beshoy222666888@outlook.com>',
+        from: '"Beshoy 👻" <beshoyeshak865@outlook.com>',
         to: req.body.gmail, 
         subject: "Confirm Your Email ✔",
-        text:htmlTemplete(verificationNumber,name),
+        html:htmlTemplete(verificationNumber,name),
     };
       
       transporter.sendMail(mailOptions, (error, info) => {
@@ -119,14 +119,14 @@ let forgetPassword = catchAsyncError(async (req, res) => {
     const transporter = createTransport({
         service: 'outlook',
         auth: {
-            user: "beshoy222666888@outlook.com",
-            pass: process.env.PASSWORD_EMAIL,
+            user: "beshoyeshak865@outlook.com",
+            pass: "beshoy4321",
         },
     });
 
 
     const mailOptions = {
-        from: '"Beshoy 👻" <beshoy222666888@outlook.com>',
+        from: '"Beshoy 👻" <beshoyeshak865@outlook.com>',
         to: gmail,
         subject: 'Password Reset ✔',
         html: htmlResetPassword(token),
