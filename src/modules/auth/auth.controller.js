@@ -51,7 +51,7 @@ const signIn=catchAsyncError(async (req,res,next)=>{
     if(!user.confrimEmail) return next(new AppError("Please Verfiy Your Email Before",403))
     if(!(await bcrypt.compare(password, user.password))) return next(new AppError("Account Not Found or Password Wrong",403))
   
-    let token = jwt.sign({userId:user._id,userName:user.name,Gender:user.gender,Email:user.gmail,Phone:user.phone },process.env.SECRET_KEY );
+    let token = jwt.sign({userId:user._id,userName:user.name,Gender:user.gender,Email:user.gmail,Phone:user.phone ,status : user.isAdmin },process.env.SECRET_KEY );
     res.json({message:"success",token})
 })
 const confirmEmail =catchAsyncError(async(req,res,next)=>{
@@ -62,7 +62,7 @@ const email =await userModel.findOne({gmail:req.body.gmail})
 if(!email) return next(new AppError("You Must Sign Up Before"))
 if (emailVerificationNumbers[userEmail] === parseInt(userEnteredNumber, 10)) {
  let user = await userModel.findOneAndUpdate({gmail:userEmail},{confrimEmail:true},{new:true})
- let token = jwt.sign({userId:user._id,userName:user.name,Gender:user.gender,Email:user.gmail,Phone:user.phone },process.env.SECRET_KEY );
+ let token = jwt.sign({userId:user._id,userName:user.name,Gender:user.gender,Email:user.gmail,Phone:user.phone ,status : user.isAdmin  },process.env.SECRET_KEY );
  res.status(200).json({message:"The Verfication Successful" ,token})
 } else {
   res.status(403).json({message:"The Code you Entered is incorrect"})
@@ -73,8 +73,7 @@ const updateDate =catchAsyncError(async (req,res,next)=>{
     const user =await userModel.findById(req.user._id)
     if(!user) return next(new AppError("Not Valid Email",403))
     const newUpdate =await userModel.findByIdAndUpdate(req.user._id,req.body,{new:true})
-    const {isAdmin,...other}=newUpdate._doc;
-    res.json({message:"success",...other})
+    res.json({message:"success",newUpdate})
 })
 const changePassword =catchAsyncError(async (req,res,next)=>{
     const {newPassword,oldPassword}=req.body
@@ -83,15 +82,13 @@ const changePassword =catchAsyncError(async (req,res,next)=>{
     if(!oldPassword) return next(new AppError("please Enter Old Password",403))
     if(!(await bcrypt.compare(oldPassword, user.password)))  return next(new AppError("Password That You Enter is Wrong"))
     const newUpdate =await userModel.findByIdAndUpdate(req.user,{password:newPassword},{new:true})
-    const {isAdmin,...other}=newUpdate._doc;
-    res.json({message:"success",...other})
+    res.json({message:"success",newUpdate})
 })
 
 const getUser =catchAsyncError(async (req,res,next)=>{
     const user =await userModel.findById(req.user._id)
     if(!user) return next(new AppError("User Not Found" ,403))
-    const {isAdmin,...other}=user._doc;
-    res.json({message:"success",...other})
+    res.json({message:"success",user})
 })
 
 const logout =catchAsyncError(async (req,res,next)=>{

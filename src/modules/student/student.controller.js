@@ -11,8 +11,7 @@ const addStudent =catchAsyncError(async (req,res,next)=>{
     req.body.confrimEmail =true
     const newUser =new userModel(req.body)
     await newUser.save()
-    const {isAdmin,...other}=newUser._doc;
-    res.json({message:"success",...other})
+    res.json({message:"success",newUser})
 })
 
 const deleteUser =catchAsyncError(async (req,res,next)=>{
