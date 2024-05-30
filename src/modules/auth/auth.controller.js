@@ -52,7 +52,7 @@ const signIn=catchAsyncError(async (req,res,next)=>{
     if(!(await bcrypt.compare(password, user.password))) return next(new AppError("Account Not Found or Password Wrong",403))
   
     let token = jwt.sign({userId:user._id,userName:user.name,Gender:user.gender,Email:user.gmail,Phone:user.phone ,status : user.isAdmin },process.env.SECRET_KEY );
-    res.json({message:"success",token})
+    res.json({message:"success",token , user})
 })
 const confirmEmail =catchAsyncError(async(req,res,next)=>{
         const userEmail = req.body.gmail;
