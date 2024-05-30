@@ -14,11 +14,11 @@ import { AppError } from '../../utils/AppError.js';
 let emailVerificationNumbers = {};
 const signUp =catchAsyncError(async (req,res,next)=>{
     const userEmail = req.body.gmail;
-    const {name} =req.body
-    const gmail =await userModel.findOne({gmail:req.body.gmail})
-    if(gmail && gmail.confrimEmail) return next(new AppError("Account Already Exist",403))
+    const {name, nationalPerson , gmail , level , password , code} =req.body
+    const Gmail =await userModel.findOne({gmail:req.body.gmail})
+    if(Gmail && Gmail.confrimEmail) return next(new AppError("Account Already Exist",403))
 
-    const user =new userModel(req.body)
+    const user =new userModel({name, nationalPerson , gmail , level , password , code})
     await user.save()
     const   transporter = nodemailer.createTransport({
         service: 'outlook',
@@ -41,8 +41,7 @@ const signUp =catchAsyncError(async (req,res,next)=>{
             return res.status(500).json({message:'Error sending email' + error});
         }
     });
-    const {isAdmin,confrimEmail,...other}=user._doc;
-    res.json({message:"Success and Code Has been sent In Your Email To Verfiy Email",...other})
+    res.json({message:"Success and Code Has been sent In Your Email To Verfiy Email", user})
 })
 
 const signIn=catchAsyncError(async (req,res,next)=>{
