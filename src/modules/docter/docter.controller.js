@@ -8,15 +8,14 @@ import { catchAsyncError } from "../../utils/catchError.js"
 
 
 const addDocter =catchAsyncError(async (req,res,next)=>{
-    const {gmail} =req.body
+    const {name, nationalPerson , gmail , password} =req.body
     const email =await userModel.findOne({gmail})
     if(email && email.confrimEmail) return next(new AppError("Account Already Exist",403))
     req.body.confrimEmail =true
     req.body.isAdmin ="doctor"
-    const newUser =new userModel(req.body)
+    const newUser =new userModel({name, nationalPerson , gmail , password })
     await newUser.save()
-    const {isAdmin,...other}=newUser._doc;
-    res.json({message:"success",...other})
+    res.json({message:"success",newUser})
 })
 
 const deleteDoctor =catchAsyncError(async (req,res,next)=>{

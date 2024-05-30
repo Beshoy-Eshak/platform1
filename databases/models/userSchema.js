@@ -8,9 +8,9 @@ export const userSchema = mongoose.Schema({
     type:String ,
    } ,
     gmail: { type: String },
-    level: { type: Number, required: true },
+    level: { type: Number},
     password: { type: String, required: true },
-    code: { type: Number, required: true } ,
+    code: { type: Number} ,
     confrimEmail:{
         type:Boolean ,
         default:false
