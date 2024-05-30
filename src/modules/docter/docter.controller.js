@@ -13,7 +13,7 @@ const addDocter =catchAsyncError(async (req,res,next)=>{
     if(email && email.confrimEmail) return next(new AppError("Account Already Exist",403))
     req.body.confrimEmail =true
     req.body.isAdmin ="doctor"
-    const newUser =new userModel({name, nationalPerson , gmail , password })
+    const newUser =new userModel({name, nationalPerson , gmail , password , confrimEmail : req.body.confrimEmail , isAdmin : req.body.isAdmin })
     await newUser.save()
     res.json({message:"success",newUser})
 })
