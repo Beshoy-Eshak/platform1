@@ -3,7 +3,7 @@ import { AppError } from "../../utils/AppError.js"
 import { catchAsyncError } from "../../utils/catchError.js"
 import jwt from 'jsonwebtoken'
 
-const protectedRoutes = catchAsyncError(async (req, res, next) => {
+const protectedRoutes = catchAsyncError(async(req, res, next) => {
     const { token } = req.headers
     if (!token) return next(new AppError("TOKEN MUST BE PROVIDED", 401))
     const decoded = await jwt.verify(token, process.env.SECRET_KEY)
@@ -13,8 +13,8 @@ const protectedRoutes = catchAsyncError(async (req, res, next) => {
     next()
 })
 
-const allowedTo = (...roles) => {
-    return catchAsyncError(async (req, res, next) => {
+const allowedTo = (roles) => {
+    return catchAsyncError(async(req, res, next) => {
         if (!roles.includes(req.user.isAdmin)) return next(new AppError("You are not authorized to access this route you are " + req.user.isAdmin, 401))
         next()
 
@@ -22,6 +22,6 @@ const allowedTo = (...roles) => {
 }
 
 export {
-    protectedRoutes ,
+    protectedRoutes,
     allowedTo
 }

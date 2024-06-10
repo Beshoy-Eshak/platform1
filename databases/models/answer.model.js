@@ -1,0 +1,19 @@
+import mongoose from 'mongoose';
+const AnswerSchema = new mongoose.Schema({
+    selectAnswer: {
+        type: String,
+        required: true
+    },
+    quest: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "quest"
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    }
+});
+
+const AnswerModel = mongoose.model('Answer', AnswerSchema);
+
+export default AnswerModel
