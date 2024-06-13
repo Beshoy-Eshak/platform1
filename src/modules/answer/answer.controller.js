@@ -1,25 +1,26 @@
 import AnswerModel from "../../../databases/models/answer.model.js"
 import { questModel } from "../../../databases/models/quest.model.js"
-
+import { userModel } from "../../../databases/models/userSchema.js"
 const AddAnswer = async(req, res) => {
 
-    const { Answer } = req.body
-    let answer = await AnswerModel.findOne({ Answer })
+    const { selectAnswer, questID } = req.body
+    let answer = await AnswerModel.findOne({ questID })
     if (answer) {
-        res.json({ message: 'course already found' })
+        res.json({ message: 'quest already found' })
     } else {
 
-        const answers = await AnswerModel.insertMany({ answer })
+        const answers = await AnswerModel.insertMany({ selectAnswer, questID })
         res.json({ message: 'success', answers })
     }
 
 
 }
 
-const AddAnswers = async(req, res) => {
-    const { quest, selectedAnswer } = req.body; //quest is questionId
 
-    //
+
+const AddAnswers = async(req, res) => {
+    const { quest, selectedAnswer } = req.body; // quest is questionId
+
     if (!req.user) {
         return res.status(401).json({ message: 'You must be logged in to submit an answer' });
     }
@@ -28,53 +29,81 @@ const AddAnswers = async(req, res) => {
         return res.status(400).json({ message: 'Invalid request' });
     }
 
-    const question = await questModel.findById(quest);
-    if (!question) {
-        return res.status(404).json({ message: 'Question not found' });
-    }
-
-    if (!question.options.includes(selectedAnswer)) {
-        return res.status(400).json({ message: 'Invalid answer' });
-    }
-
-    const existingAnswer = await AnswerModel.findOne({ quest: questionId, user: req.user.id });
-    if (existingAnswer) {
-        return res.status(400).json({ message: 'You have already submitted an answer for this question' });
-    }
-
-
-
     try {
+        const question = await questModel.findById(quest);
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        if (!question.options.includes(selectedAnswer)) {
+            return res.status(400).json({ message: 'Invalid answer' });
+        }
+
+        const existingAnswer = await AnswerModel.findOne({ questID: quest, user: req.user._id });
+        if (existingAnswer) {
+            return res.status(400).json({ message: 'You have already submitted an answer for this question' });
+        }
+
+        const answer = new AnswerModel({
+            selectAnswer: selectedAnswer,
+            questID: quest,
+            user: req.user._id
+        });
+
         await answer.save();
+
         // Send the answer to the doctor
         const doctor = await userModel.findOne({ isAdmin: 'doctor' });
         if (doctor) {
-
+            // Implement your logic to send the answer to the doctor
         }
+
         res.json({ message: 'Answer submitted successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error submitting answer' });
+        res.status(500).json({ message: 'Error submitting answer', error });
     }
 };
 
+
+// const getMyAnswers = async(req, res) => {
+//     const userId = req.user.id;
+
+//     if (!userId) {
+//         return res.status(400).json({ message: 'Invalid request' });
+//     }
+
+//     const answers = await AnswerModel.find({ user: userId });
+
+//     if (!answers) {
+//         return res.status(404).json({ message: 'No answers found' });
+//     } else {
+//         res.json({ message: 'success', answers });
+
+//     }
+
+// }
+
 const getMyAnswers = async(req, res) => {
-    const userId = req.user.id;
+    const userId = req.user && req.user.id; // Ensure user is authenticated
 
     if (!userId) {
         return res.status(400).json({ message: 'Invalid request' });
     }
 
-    const answers = await AnswerModel.find({ user: userId });
+    try {
+        const answers = await AnswerModel.find({ user: userId }).populate('questID', 'question');
 
-    if (!answers) {
-        return res.status(404).json({ message: 'No answers found' });
-    } else {
+        if (!answers.length) {
+            return res.status(404).json({ message: 'No answers found' });
+        }
+
         res.json({ message: 'success', answers });
-
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching answers', error });
     }
+};
 
-}
 const getAnswers = async(req, res) => {
     const doctorId = req.user._id; // assuming the doctor ID is available in the request
     const questions = await questModel.find({ user: doctorId }); // retrieve questions added by the doctor

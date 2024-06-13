@@ -4,7 +4,7 @@ const AnswerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    quest: {
+    questID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "quest"
     },

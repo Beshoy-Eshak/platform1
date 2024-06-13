@@ -12,8 +12,8 @@ import { allowedTo, protectedRoutes } from "../authencations/auths.js"
 
 const AnsweRouter = express.Router()
 
-AnsweRouter.post("/Answer/studentid", protectedRoutes, allowedTo(['doctor']), AddAnswer)
-AnsweRouter.post("/Answer/student", protectedRoutes, allowedTo(['doctor']), AddAnswers)
+AnsweRouter.post("/Answer/student", protectedRoutes, allowedTo(['doctor']), AddAnswer)
+AnsweRouter.post("/Answer/studentID", protectedRoutes, allowedTo(['doctor']), AddAnswers)
 AnsweRouter.get("/Answer/userAnswer", getMyAnswers)
 AnsweRouter.put("/Answer/user", protectedRoutes, allowedTo(['doctor']), updateAnswer)
 AnsweRouter.delete("/Answer/user", protectedRoutes, allowedTo(['doctor']), deleteAnswer)

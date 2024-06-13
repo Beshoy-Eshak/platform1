@@ -3,7 +3,7 @@ import { examModel } from "../../../databases/models/exam.model.js"
 
 
 const AddExam = async(req, res) => {
-    const { name, code, doctorname, quesNUM, totalMark, startTime, endTime } = req.body;
+    const { name, code, doctorname, quesNUM, totalMark, startTime, endTime, CrseId } = req.body;
     try {
         const exam = await examModel.findOne({ code });
         if (exam) {
@@ -17,7 +17,8 @@ const AddExam = async(req, res) => {
                 totalMark,
 
                 startTime,
-                endTime
+                endTime,
+                CrseId
             });
             res.json({ message: "Exam added successfully", newExam });
         }
@@ -27,26 +28,18 @@ const AddExam = async(req, res) => {
 };
 
 
-
-
-
-
 const UserGetAllExams = async(req, res) => {
     try {
-        // const currentDepartment = req.query.department;
         const currentTime = new Date();
+        const lastTime = new Date();
 
-        if (examModel) {
-            const exams = await examModel.find({
-                // department: currentDepartment,
-                "examtime.startTime": { $lte: currentTime },
-                "examtime.endTime": { $gte: currentTime },
-            });
+        // Find exams within the current time window
+        const exams = await examModel.find({
+            startTime: { $lte: currentTime },
+            endTime: { $gte: lastTime },
+        });
 
-            res.json({ message: "success", exams });
-        } else {
-            res.status(500).json({ message: "Error: examModel is not defined." });
-        }
+        res.json({ message: "success", exams });
     } catch (error) {
         res.status(500).json({
             message: "Error: An error occurred while fetching exams.",
@@ -57,9 +50,11 @@ const UserGetAllExams = async(req, res) => {
 
 
 
-
 const GetExamsByDoctor = async(req, res) => {
     try {
+
+
+
         // const doctorId = req.query.doctorId; // Assuming you have a query parameter for doctorId
         const exams = await examModel.find()
             // .find({ doctorname: doctorId })
@@ -74,41 +69,49 @@ const GetExamsByDoctor = async(req, res) => {
     }
 };
 
-// Usage example:
-// GET /exams?doctorId=123
-// Returns exams associated with the specified doctor
+
+const showExamByDoctor = async(req, res) => {
+    const { _id } = req.body;
+
+    try {
+        const exam = await examModel.findOne({ _id });
+        if (exam) {
+            res.json({ message: 'success', exam });
+        } else {
+            res.json({ message: 'Course not found or unauthorized' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching course', error });
+    }
+};
 
 
-// const getExam = async(req, res) => {
-//     try {
-//         const currentDepartment = req.query.department;
-//         // const { _id } = req.body // افتراضًا يتم إرسال قسم الطالب في الاستعلام
-//         // const currentTime = new Date();
+const showExamByStudent = async(req, res) => {
+    const { _id } = req.body;
 
-//         // التحقق من وجود examModel وتنفيذ استعلام البحث
-//         if (examModel) {
-//             const exams = await examModel.find({
-//                 department: currentDepartment,
+    try {
+        const currentTime = new Date();
 
-//                 // الامتحانات التي بدأت أو ستبدأ في الوقت الحالي
-//                 // startTime: { $lte: currentTime },
-//                 // الامتحانات التي لم تنته بعد
-//                 // endTime: { $gte: currentTime },
-//             });
+        // Find the specific exam by its _id
+        const exam = await examModel.findById(_id);
+        if (exam) {
+            // Find exams within the current time window
+            const exams = await examModel.find({
+                startTime: { $lte: currentTime },
+                endTime: { $gte: currentTime },
+            });
 
-//             res.json({ message: 'success', exams });
-//         } else {
-//             res.status(500).json({ message: 'Error: examModel is not defined.' });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error: An error occurred while fetching exams.', error });
-//     }
-
-// }
-
-
-
-
+            res.json({ message: "success", exams });
+        } else {
+            res.status(404).json({ message: "Exam not found" });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Error: An error occurred while fetching exams.",
+            error,
+        });
+    }
+};
 
 
 
@@ -132,11 +135,6 @@ const updateExam = async(req, res) => {
     }
 };
 
-// Usage example:
-// PUT /exams/:id
-// Update an exam by providing the exam ID in the URL and the updated data in the request body
-
-
 
 const deleteExam = async(req, res) => {
     const { _id } = req.body;
@@ -157,42 +155,16 @@ const deleteExam = async(req, res) => {
     }
 };
 
-// Usage example:
-// DELETE /exams/:id
-// Delete an exam by providing the exam ID in the URL
+
 
 
 
 export {
     UserGetAllExams,
+    showExamByStudent,
     AddExam,
     deleteExam,
     updateExam,
-    // getExam,
+    showExamByDoctor,
     GetExamsByDoctor
 }
-
-
-// const UserGetAllExams = async(req, res) => {
-
-//     const currentDepartment = req.userModel.department; // افتراضًا يتم إرسال قسم الطالب في الاستعلام
-//     const currentTime = new Date();
-
-//     const exams = await examModel.find({
-//         department: currentDepartment,
-//         startTime: { $lte: currentTime }, // الامتحانات التي بدأت أو ستبدأ في الوقت الحالي
-//         endTime: { $gte: currentTime }, // الامتحانات التي لم تنته بعد
-//     });
-
-//     res.json({ message: 'success', exams })
-//         // let exam = await examModel.find()
-//         // res.json({ message: 'success', exam })
-// }
-
-// const UserGetAllExams = async(req, res) => {
-
-
-
-//     let exam = await examModel.find()
-//     res.json({ message: 'success', exam })
-// }

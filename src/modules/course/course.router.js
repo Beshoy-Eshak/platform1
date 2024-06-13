@@ -4,10 +4,10 @@ import { allowedTo, protectedRoutes } from "../authencations/auths.js"
 
 const courseRouter = express.Router()
 
-courseRouter.post("/course/doctor", protectedRoutes, allowedTo(['doctor']), Addcourse)
-courseRouter.get("/course/user", getAllcourses)
-courseRouter.put("/course/doctor", protectedRoutes, allowedTo(['doctor']), updatecourse)
-courseRouter.delete("/course/doctor", protectedRoutes, allowedTo(['doctor']), deletecourse)
+courseRouter.post("/course/addCourse", protectedRoutes, allowedTo(['admin']), Addcourse)
+courseRouter.get("/courses", getAllcourses)
+courseRouter.put("/course/doctor", protectedRoutes, allowedTo(['admin']), updatecourse)
+courseRouter.delete("/course/delete", protectedRoutes, allowedTo(['admin']), deletecourse)
 courseRouter.get("/course", getcourse)
     // courseRouter.get("/courses", getCourses)
 
