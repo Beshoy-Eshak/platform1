@@ -50,15 +50,35 @@ const UserGetAllExams = async(req, res) => {
 
 
 
+// const GetExamsByDoctor = async(req, res) => {
+//     try {
+
+
+
+//         const exams = await examModel.find()
+//             // .populate("CrseId", "courseName"); // Populate the related course information
+
+//         res.json({ message: "success", exams });
+//     } catch (error) {
+//         res.status(500).json({
+//             message: "Error: An error occurred while fetching exams.",
+//             error,
+//         });
+//     }
+// };
+
+
 const GetExamsByDoctor = async(req, res) => {
     try {
+        const courseId = req.query.CrseId;
 
+        if (!courseId) {
+            return res.status(400).json({ message: "Course ID is required" });
+        }
 
-
-        // const doctorId = req.query.doctorId; // Assuming you have a query parameter for doctorId
-        const exams = await examModel.find()
-            // .find({ doctorname: doctorId })
-            // .populate("CrseId", "courseName"); // Populate the related course information
+        // Find exams for the given course ID and populate the related course information with course code
+        const exams = await examModel.find({ CrseId: courseId })
+            .populate("CrseId", "code");
 
         res.json({ message: "success", exams });
     } catch (error) {
@@ -68,6 +88,39 @@ const GetExamsByDoctor = async(req, res) => {
         });
     }
 };
+
+
+
+
+
+
+// // Define the function to get exams by doctor
+// const GetExamsByDoctor = async(req, res) => {
+//     try {
+//         // Extract the doctor's name from the query parameters
+//         const doctorName = req.query.doctorname;
+
+//         // If the doctor's name is not provided, return an error
+//         if (!doctorName) {
+//             return res.status(400).json({ message: "Doctor name is required" });
+//         }
+
+//         // Find exams for the given doctor's name and populate the related course information
+//         const exams = await examModel.find({ doctorname: doctorName })
+//             .populate("CrseId", "courseName"); // Assuming the Course model has a courseName field
+
+//         // Send the response
+//         res.json({ message: "success", exams });
+//     } catch (error) {
+//         // Handle errors and send the response
+//         res.status(500).json({
+//             message: "Error: An error occurred while fetching exams.",
+//             error,
+//         });
+//     }
+// };
+
+
 
 
 const showExamByDoctor = async(req, res) => {

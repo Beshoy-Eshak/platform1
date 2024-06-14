@@ -4,10 +4,10 @@ import { allowedTo, protectedRoutes } from "../authencations/auths.js"
 
 const questRouter = express.Router()
 
-questRouter.post("/addQuestion", protectedRoutes, allowedTo([
+questRouter.post("/courses/exams/addQuestion", protectedRoutes, allowedTo([
     'doctor'
 ]), AddQuest)
-questRouter.get("/question/doctor", protectedRoutes, allowedTo(['doctor']), getAllQuestBydoctor)
+questRouter.get("/courses/exams/Questions", protectedRoutes, allowedTo(['doctor']), getAllQuestBydoctor)
 questRouter.put("/questions/update", protectedRoutes, allowedTo(['doctor']), updateQuest)
 questRouter.delete("/questions/delete", protectedRoutes, allowedTo(['doctor']), deleteQuest)
     // questRouter.get("/questions/doctor/", getContent)

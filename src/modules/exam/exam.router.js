@@ -7,11 +7,11 @@ const examRouter = express.Router()
 examRouter.post("/add", protectedRoutes, allowedTo([
     'admin'
 ]), AddExam)
-examRouter.get("/user/exams", UserGetAllExams)
+examRouter.get("/courses/studentExams", UserGetAllExams)
 examRouter.get("/student/exam", showExamByStudent)
 examRouter.put("/doctor", protectedRoutes, allowedTo(['admin']), updateExam)
 examRouter.delete("/doctor", protectedRoutes, allowedTo(['admin']), deleteExam)
-examRouter.get("/doctor/exams", protectedRoutes, allowedTo(['doctor']), GetExamsByDoctor)
-examRouter.get("/doctor/exam", protectedRoutes, allowedTo(['doctor']), showExamByDoctor)
+examRouter.get("/courses/docExams", protectedRoutes, allowedTo(['doctor']), GetExamsByDoctor)
+examRouter.get("/courses/docExams/exam", protectedRoutes, allowedTo(['doctor']), showExamByDoctor)
 
 export default examRouter
