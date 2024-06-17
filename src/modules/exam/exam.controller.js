@@ -30,6 +30,11 @@ const AddExam = async(req, res) => {
 
 const UserGetAllExams = async(req, res) => {
     try {
+        const courseId = req.query.CrseId;
+
+        if (!courseId) {
+            return res.status(400).json({ message: "Course ID is required" });
+        }
         const currentTime = new Date();
         const lastTime = new Date();
 
@@ -37,7 +42,8 @@ const UserGetAllExams = async(req, res) => {
         const exams = await examModel.find({
             startTime: { $lte: currentTime },
             endTime: { $gte: lastTime },
-        });
+            CrseId: courseId
+        }).populate("CrseId", "code");;
 
         res.json({ message: "success", exams });
     } catch (error) {

@@ -49,7 +49,7 @@ const getAllcourses = async(req, res) => {
 
 
 const getcourse = async(req, res) => {
-    const { _id } = req.body;
+    const { _id } = req.params;
     // const userId = req.user._id; // افترض أن هذا هو معرّف المستخدم الحالي (الدكتور)
 
     try {

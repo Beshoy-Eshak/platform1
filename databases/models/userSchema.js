@@ -11,7 +11,6 @@ export const userSchema = mongoose.Schema({
     level: { type: Number },
     password: { type: String, required: true },
     code: { type: Number },
-    department: { type: String },
     confrimEmail: {
         type: Boolean,
         default: false

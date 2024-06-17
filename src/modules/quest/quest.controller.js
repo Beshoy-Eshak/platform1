@@ -19,47 +19,17 @@ const AddQuest = async(req, res) => {
     }
 
 };
-// const AddQuest = async(req, res) => {
-//     const { questions, examId, courseId } = req.body;
 
-//     try {
-
-
-//         // Check if an exam with the given ID exists
-
-//         // exam = await questModel.findById(examId);
-//         // if (!exam) {
-//         //     return res.status(404).json({ message: 'Exam not found' });
-//         // } else {
-//         // Create a new exam with the given questions
-//         const q = await questModel.insertMany(questions, courseId, examId);
-
-//         // }
-
-//         res.json({ message: 'Success', q });
-//     } catch (error) {
-//         res.status(500).json({ message: "Error adding exam", error });
-//     }
-// };
-
-
-
-// const getAllQuestBydoctor = async(req, res) => {
-//     try {
-//         const quests = await questModel.find();
-
-//         res.json({ message: "success", quests });
-//     } catch (error) {
-//         res.status(500).json({
-//             message: "Error: An error occurred while fetching questions.",
-//             error,
-//         });
-//     }
-// };
 
 const getAllQuestBydoctor = async(req, res) => {
     try {
-        const quests = await questModel.find().select("-examId");
+        const { examId } = req.body;
+
+        if (!examId) {
+            return res.status(400).json({ message: "examId is required" });
+        }
+
+        const quests = await questModel.find({ examId }).select("-examId");
         res.json({ message: "success", quests });
     } catch (error) {
         if (!res.headersSent) {
@@ -80,6 +50,12 @@ const getAllQuestBydoctor = async(req, res) => {
 // }
 
 const showContent = async(req, res) => {
+    const { examId } = req.body;
+
+    if (!examId) {
+        return res.status(400).json({ message: "examId is required" });
+    }
+
     const currentTime = new Date();
     console.log(currentTime)
     try {
@@ -88,6 +64,7 @@ const showContent = async(req, res) => {
 
             const questions = await questModel.find({
                 startTime: { $lte: currentTime },
+                examId
             }).select("-correctAnswer -examId");
             // const questions = await questModel.find().select("-correctAnswer  -examId ");
             res.send(questions.map(q => ({ question: q.question, options: q.options })));
