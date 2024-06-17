@@ -3,13 +3,13 @@ import { questModel } from "../../../databases/models/quest.model.js"
 import { userModel } from "../../../databases/models/userSchema.js"
 const AddAnswer = async(req, res) => {
 
-    const { selectAnswer, questID } = req.body
+    const { selectAnswer, questID, userId } = req.body
     let answer = await AnswerModel.findOne({ questID })
     if (answer) {
         res.json({ message: 'quest already found' })
     } else {
 
-        const answers = await AnswerModel.insertMany({ selectAnswer, questID })
+        const answers = await AnswerModel.insertMany({ selectAnswer, questID, userId })
         res.json({ message: 'success', answers })
     }
 

@@ -8,7 +8,11 @@ const AnswerSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "quest"
     },
-    user: {
+    examId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "exam"
+    },
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     }
