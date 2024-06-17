@@ -8,7 +8,7 @@ courseRouter.post("/course/addCourse", protectedRoutes, allowedTo(['admin']), Ad
 courseRouter.get("/courses", getAllcourses)
 courseRouter.put("/course/doctor", protectedRoutes, allowedTo(['admin']), updatecourse)
 courseRouter.delete("/course/delete", protectedRoutes, allowedTo(['admin']), deletecourse)
-courseRouter.get("/course", getcourse)
+courseRouter.get("/course/:id", getcourse)
     // courseRouter.get("/courses", getCourses)
 
 export default courseRouter

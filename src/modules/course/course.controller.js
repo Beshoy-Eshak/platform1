@@ -49,11 +49,10 @@ const getAllcourses = async(req, res) => {
 
 
 const getcourse = async(req, res) => {
-    const { _id } = req.params;
-    // const userId = req.user._id; // افترض أن هذا هو معرّف المستخدم الحالي (الدكتور)
+    const { id } = req.params;
 
     try {
-        const course = await CourseModel.findOne({ _id });
+        const course = await CourseModel.findById(id);
         if (course) {
             res.json({ message: 'success', course });
         } else {
