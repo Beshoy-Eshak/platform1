@@ -17,54 +17,47 @@ const AddAnswer = async(req, res) => {
 }
 
 
+// const AddAnswers = async(req, res) => {
+//     const { selectAnswer, questID, examId } = req.body;
 
-const AddAnswers = async(req, res) => {
-    const { quest, selectedAnswer } = req.body; // quest is questionId
+//     if (!req.user) {
+//         return res.status(401).json({ message: 'You must be logged in to submit an answer' });
+//     }
 
-    if (!req.user) {
-        return res.status(401).json({ message: 'You must be logged in to submit an answer' });
-    }
+//     if (!questID || !selectAnswer || !examId) {
+//         return res.status(400).json({ message: 'Invalid request' });
+//     }
 
-    if (!quest || !selectedAnswer) {
-        return res.status(400).json({ message: 'Invalid request' });
-    }
+//     try {
+//         const question = await questModel.findById(questID);
+//         if (!question) {
+//             return res.status(404).json({ message: 'Question not found' });
+//         }
 
-    try {
-        const question = await questModel.findById(quest);
-        if (!question) {
-            return res.status(404).json({ message: 'Question not found' });
-        }
+//         if (!question.options.includes(selectAnswer)) {
+//             return res.status(400).json({ message: 'Invalid answer' });
+//         }
 
-        if (!question.options.includes(selectedAnswer)) {
-            return res.status(400).json({ message: 'Invalid answer' });
-        }
+//         const existingAnswer = await AnswerModel.findOne({ questID: questID, userId: req.user._id });
+//         if (existingAnswer) {
+//             return res.status(400).json({ message: 'You have already submitted an answer for this question' });
+//         }
 
-        const existingAnswer = await AnswerModel.findOne({ questID: quest, user: req.user._id });
-        if (existingAnswer) {
-            return res.status(400).json({ message: 'You have already submitted an answer for this question' });
-        }
+//         const answer = new AnswerModel({
+//             selectAnswer,
+//             questID,
+//             examId,
+//             userId: req.user._id
+//         });
 
-        const answer = new AnswerModel({
-            selectAnswer: selectedAnswer,
-            questID: quest,
-            user: req.user._id
-        });
+//         await answer.save();
 
-        await answer.save();
-
-        // Send the answer to the doctor
-        const doctor = await userModel.findOne({ isAdmin: 'doctor' });
-        if (doctor) {
-            // Implement your logic to send the answer to the doctor
-        }
-
-        res.json({ message: 'Answer submitted successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error submitting answer', error });
-    }
-};
-
+//         res.json({ message: 'Answer submitted successfully' });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: 'Error submitting answer', error });
+//     }
+// };
 
 // const getMyAnswers = async(req, res) => {
 //     const userId = req.user.id;
@@ -185,6 +178,6 @@ export {
     updateAnswer,
     checkAnswer,
     getAnswers,
-    AddAnswers,
+    // AddAnswers,
 
 }

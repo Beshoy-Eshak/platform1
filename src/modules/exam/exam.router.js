@@ -8,10 +8,10 @@ examRouter.post("/courses/exams/add", protectedRoutes, allowedTo([
     'admin'
 ]), AddExam)
 examRouter.get("/courses/exams/studentExams", UserGetAllExams)
-examRouter.get("/courses/exams/student/exam", showExamByStudent)
+examRouter.get("/courses/exams/student/exam/:id", showExamByStudent)
 examRouter.put("/courses/exams/update", protectedRoutes, allowedTo(['admin']), updateExam)
-examRouter.delete("/doctor", protectedRoutes, allowedTo(['admin']), deleteExam)
+examRouter.delete("/courses/exams/delete", protectedRoutes, allowedTo(['admin']), deleteExam)
 examRouter.get("/courses/docExams", protectedRoutes, allowedTo(['doctor']), GetExamsByDoctor)
-examRouter.get("/courses/docExams/exam", protectedRoutes, allowedTo(['doctor']), showExamByDoctor)
+examRouter.get("/courses/docExams/exam/:id", protectedRoutes, allowedTo(['doctor']), showExamByDoctor)
 
 export default examRouter

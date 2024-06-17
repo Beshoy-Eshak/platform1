@@ -36,12 +36,12 @@ const UserGetAllExams = async(req, res) => {
             return res.status(400).json({ message: "Course ID is required" });
         }
         const currentTime = new Date();
-        const lastTime = new Date();
+        console.log(currentTime);
 
         // Find exams within the current time window
         const exams = await examModel.find({
             startTime: { $lte: currentTime },
-            endTime: { $gte: lastTime },
+            // endTime: { $gte: lastTime },
             CrseId: courseId
         }).populate("CrseId", "code");;
 
@@ -130,14 +130,14 @@ const GetExamsByDoctor = async(req, res) => {
 
 
 const showExamByDoctor = async(req, res) => {
-    const { _id } = req.body;
+    const { id } = req.params;
 
     try {
-        const exam = await examModel.findOne({ _id });
+        const exam = await examModel.findById(id);
         if (exam) {
             res.json({ message: 'success', exam });
         } else {
-            res.json({ message: 'Course not found or unauthorized' });
+            res.json({ message: 'exam not found or unauthorized' });
         }
     } catch (error) {
         res.status(500).json({ message: 'Error fetching course', error });
@@ -145,22 +145,53 @@ const showExamByDoctor = async(req, res) => {
 };
 
 
+// const showExamByStudent = async(req, res) => {
+//     const { id } = req.params;
+
+//     try {
+//         const currentTime = new Date();
+//         const lastTime = Date();
+//         console.log(currentTime)
+//         console.log(lastTime)
+
+//         // Find the specific exam by its _id
+//         const exam = await examModel.findById(id);
+//         if (exam) {
+//             // Find exams within the current time window
+//             const exams = await examModel.find({
+//                 startTime: { $lte: currentTime },
+//                 endTime: { $gte: lastTime },
+//             });
+
+//             res.json({ message: "success", exams });
+//         } else {
+//             res.status(404).json({ message: "Exam not found" });
+//         }
+//     } catch (error) {
+//         res.status(500).json({
+//             message: "Error: An error occurred while fetching exams.",
+//             error,
+//         });
+//     }
+// };
+
+
 const showExamByStudent = async(req, res) => {
-    const { _id } = req.body;
+    const { id } = req.params;
 
     try {
         const currentTime = new Date();
+        console.log(currentTime);
 
         // Find the specific exam by its _id
-        const exam = await examModel.findById(_id);
+        const exam = await examModel.findById(id);
         if (exam) {
-            // Find exams within the current time window
-            const exams = await examModel.find({
-                startTime: { $lte: currentTime },
-                endTime: { $gte: currentTime },
-            });
-
-            res.json({ message: "success", exams });
+            // Check if the exam is within the current time window
+            if (exam.startTime <= currentTime && exam.endTime >= currentTime) {
+                res.json({ message: "success", exam });
+            } else {
+                res.status(404).json({ message: "Exam is not currently available" });
+            }
         } else {
             res.status(404).json({ message: "Exam not found" });
         }
@@ -171,7 +202,6 @@ const showExamByStudent = async(req, res) => {
         });
     }
 };
-
 
 
 const updateExam = async(req, res) => {
