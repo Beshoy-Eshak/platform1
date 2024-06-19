@@ -17,85 +17,64 @@ const AddAnswer = async(req, res) => {
 }
 
 
-// const AddAnswers = async(req, res) => {
-//     const { selectAnswer, questID, examId } = req.body;
+const AddAnswers = async(req, res) => {
+    const { selectAnswer, questID, userId } = req.body;
 
-//     if (!req.user) {
-//         return res.status(401).json({ message: 'You must be logged in to submit an answer' });
-//     }
+    try {
 
-//     if (!questID || !selectAnswer || !examId) {
-//         return res.status(400).json({ message: 'Invalid request' });
-//     }
+        let answer = await AnswerModel.findOne({ questID, userId });
+        if (answer) {
+            return res.status(400).json({ message: 'Answer already submitted for this question by the user' });
+        }
 
-//     try {
-//         const question = await questModel.findById(questID);
-//         if (!question) {
-//             return res.status(404).json({ message: 'Question not found' });
-//         }
+        const newAnswer = new AnswerModel({ selectAnswer, questID, userId });
+        await newAnswer.save();
 
-//         if (!question.options.includes(selectAnswer)) {
-//             return res.status(400).json({ message: 'Invalid answer' });
-//         }
+        res.json({ message: 'Success', answer: newAnswer });
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding answer', error });
+    }
+};
 
-//         const existingAnswer = await AnswerModel.findOne({ questID: questID, userId: req.user._id });
-//         if (existingAnswer) {
-//             return res.status(400).json({ message: 'You have already submitted an answer for this question' });
-//         }
 
-//         const answer = new AnswerModel({
-//             selectAnswer,
-//             questID,
-//             examId,
-//             userId: req.user._id
-//         });
 
-//         await answer.save();
 
-//         res.json({ message: 'Answer submitted successfully' });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Error submitting answer', error });
-//     }
-// };
-
-// const getMyAnswers = async(req, res) => {
-//     const userId = req.user.id;
-
-//     if (!userId) {
-//         return res.status(400).json({ message: 'Invalid request' });
-//     }
-
-//     const answers = await AnswerModel.find({ user: userId });
-
-//     if (!answers) {
-//         return res.status(404).json({ message: 'No answers found' });
-//     } else {
-//         res.json({ message: 'success', answers });
-
-//     }
-
-// }
 
 const getMyAnswers = async(req, res) => {
-    const userId = req.user && req.user.id; // Ensure user is authenticated
+    const userId = req.body.userId;
+    const { courseId } = req.query;
 
-    if (!userId) {
-        return res.status(400).json({ message: 'Invalid request' });
+    if (!userId || !courseId) {
+        return res.status(400).json({ message: 'Invalid request. User ID and course ID are required.' });
     }
 
     try {
-        const answers = await AnswerModel.find({ user: userId }).populate('questID', 'question');
+        const answers = await AnswerModel.find({ userId })
+            .populate({
+                path: 'questID',
+                match: { CrseId: courseId },
+                select: 'question CrseId',
+                populate: {
+                    path: 'CrseId',
+                    select: 'courseName'
+                }
+            })
+            .populate('userId', 'name');
 
-        if (!answers.length) {
-            return res.status(404).json({ message: 'No answers found' });
+        // Filter out answers with null questID (when courseId doesn't match)
+        const filteredAnswers = answers.filter(answer => answer.questID !== null);
+
+        if (!filteredAnswers.length) {
+            return res.status(404).json({ message: 'No answers found for the specified course.' });
         }
 
-        res.json({ message: 'success', answers });
+        res.json({ message: 'success', answers: filteredAnswers });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching answers', error });
     }
 };
+
+
 
 const getAnswers = async(req, res) => {
     const doctorId = req.user._id; // assuming the doctor ID is available in the request
@@ -178,6 +157,6 @@ export {
     updateAnswer,
     checkAnswer,
     getAnswers,
-    // AddAnswers,
+    AddAnswers,
 
 }
