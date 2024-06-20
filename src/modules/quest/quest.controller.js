@@ -21,7 +21,7 @@ import { questModel } from "../../../databases/models/quest.model.js";
 // };
 
 const AddQuest = async(req, res) => {
-    const { questions, CrseId } = req.body;
+    const { questions, CrseId, startTime } = req.body;
 
     try {
         // Ensure CrseId is provided
@@ -32,7 +32,8 @@ const AddQuest = async(req, res) => {
         // Add CrseId to each question
         const questionsWithCourseId = questions.map(question => ({
             ...question,
-            CrseId
+            CrseId,
+            startTime
         }));
 
         // Insert questions with the course ID
@@ -70,7 +71,7 @@ const getAllQuestBydoctor = async(req, res) => {
             return res.status(400).json({ message: "CrseId is required" });
         }
 
-        const quests = await questModel.find({ CrseId }).select("-CrseId");
+        const quests = await questModel.find({ CrseId }).select("-CrseId -correctAnswer");
         res.json({ message: "success", quests });
     } catch (error) {
         if (!res.headersSent) {
