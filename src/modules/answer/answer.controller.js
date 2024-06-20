@@ -18,16 +18,19 @@ const AddAnswer = async(req, res) => {
 
 
 const AddAnswers = async(req, res) => {
-    const { selectAnswer, questID, userId } = req.body;
+    const { selectAnswer, questID } = req.body;
+    // const { selectAnswer, questID, userId } = req.body;
 
     try {
 
-        let answer = await AnswerModel.findOne({ questID, userId });
+        let answer = await AnswerModel.findOne({ questID });
+        // let answer = await AnswerModel.findOne({ questID, userId });
         if (answer) {
             return res.status(400).json({ message: 'Answer already submitted for this question by the user' });
         }
 
-        const newAnswer = new AnswerModel({ selectAnswer, questID, userId });
+        const newAnswer = new AnswerModel({ selectAnswer, questID });
+        // const newAnswer = new AnswerModel({ selectAnswer, questID, userId });
         await newAnswer.save();
 
         res.json({ message: 'Success', answer: newAnswer });
