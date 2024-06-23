@@ -18,16 +18,10 @@ const Addcourse = async(req, res) => {
 
 }
 
-// } else {
-//     res.json({ message: 'not allowed' })
-
-
-// }
 
 
 
 const getAllcourses = async(req, res) => {
-    // const userId = req.User._id; // افترض أن هذا هو معرّف المستخدم الحالي
     try {
         const courses = await CourseModel.find();
         res.json({ message: 'success', courses });
@@ -36,15 +30,7 @@ const getAllcourses = async(req, res) => {
     }
 };
 
-// const getCourses = async(req, res) => {
 
-//     try {
-//         const courses = await CourseModel.find();
-//         res.json({ message: 'success', courses });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error fetching courses', error });
-//     }
-// };
 
 
 
@@ -84,11 +70,7 @@ const updatecourse = async(req, res) => {
 
 
 
-// } else {
-//     res.json({ message: 'not allowed' })
 
-
-// }
 
 
 const deletecourse = async(req, res) => {

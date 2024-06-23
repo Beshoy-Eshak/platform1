@@ -24,12 +24,11 @@ const AddQuest = async(req, res) => {
     const { questions, CrseId } = req.body;
 
     try {
-        // Ensure CrseId is provided
         if (!CrseId) {
+            console.error("CrseId is required");
             return res.status(400).json({ message: "CrseId is required" });
         }
 
-        // Add CrseId to each question
         const questionsWithCourseId = questions.map(question => ({
             ...question,
             CrseId,
@@ -41,10 +40,10 @@ const AddQuest = async(req, res) => {
         res.json({ message: "Success", questions: q });
 
     } catch (error) {
+        console.error("Error adding quest", error);
         res.status(500).json({ message: "Error adding quest", error });
     }
 };
-
 
 
 // const getAllQuestBydoctor = async(req, res) => {

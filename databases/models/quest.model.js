@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const questSchema = mongoose.Schema({
-
     question: { type: String, required: true },
     correctAnswer: { type: String, required: true },
     options: [{ type: String, required: true }],
@@ -9,19 +8,16 @@ const questSchema = mongoose.Schema({
     endTime: { type: String },
     examId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "exam"
+        ref: "exam",
     },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     CrseId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course",
-    }
-
-
-
+    },
 }, {
-    timestamps: true
-})
+    timestamps: true,
+});
 
 
 const questModel = mongoose.model('quest', questSchema);
