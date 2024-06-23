@@ -17,7 +17,8 @@ const AddAnswer = async(req, res) => {
 };
 
 const AddAnswers = async(req, res) => {
-    const { selectAnswer, questID, userId } = req.body;
+    const { selectAnswer, questID } = req.body;
+    const { userId } = req.params;
 
     if (!selectAnswer || !questID || !userId) {
         return res
